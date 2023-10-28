@@ -7,18 +7,11 @@ using WeatherWear.Core.Models;
 
 namespace WeatherWear.Core
 {
-    public class WeatherRecommendationService
+    public class WeatherRecommendationService 
     {
-        private WeatherData _weatherData;
-
-        public WeatherRecommendationService(WeatherData weatherData) 
+        public WeatherData.Weather GetWeatherType(WeatherData weatherData)
         {
-            _weatherData = weatherData;
-        }
-
-        public WeatherData.Weather GetWeatherType()
-        {
-            if(_weatherData.Temperature <= 15)
+            if(weatherData.Temperature <= 15)
             {
                 return WeatherData.Weather.ColdWeather;
             }
@@ -28,9 +21,9 @@ namespace WeatherWear.Core
             }
         }
 
-        public bool IsRaining()
+        public bool IsRaining(WeatherData weatherData)
         {
-            return _weatherData.Precipitation > 0;
+            return weatherData.Precipitation > 0;
  
         }
 

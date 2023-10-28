@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using WeatherWear.Services;
+using WeatherWear.Services.APIFetchers;
 
 namespace WeatherWear
 {
@@ -17,6 +18,7 @@ namespace WeatherWear
                 .ConfigureServices((hostContext, services) =>
                 {
                     services.AddSingleton<IGeoLocationFetcher,GeoLocationFetcher>();
+                    services.AddSingleton<IWeatherFetcher, WeatherFetcher>();
                 });
     }
 }
