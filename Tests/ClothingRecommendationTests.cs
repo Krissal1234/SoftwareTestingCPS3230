@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 using WeatherWear.Core.Models;
 using WeatherWear.Core;
 using WeatherWear.Models;
-using WeatherWear.Services;
 using WeatherWear.Tests.Stubs;
 using System.Reflection;
 using System.Net.NetworkInformation;
+using WeatherWear.Services.APIFetchers.Interfaces;
 
 namespace WeatherWear.Tests
 {
@@ -27,8 +27,8 @@ namespace WeatherWear.Tests
             geoLocationFetcherMock.Setup(x => x.GetGeolocation())
                 .ReturnsAsync(new GeoLocation
                 {
-                    Latitude = 123.45,
-                    Longitude = 67.89
+                    lat = 123.45,
+                    lon = 67.89
                 });
 
             // Mock the behavior of GetWeather
@@ -76,7 +76,6 @@ namespace WeatherWear.Tests
         public async Task TestCheckWeatherAsync_WhenLocIsNotNull_AndIsRainingIsFalse_AndIsWarmIsTrue()
         {
             // Arrange
-            // Arrange
             var geoLocationFetcherMock = new Mock<IGeoLocationFetcher>();
             var weatherFetcherMock = new Mock<IWeatherFetcher>();
 
@@ -84,8 +83,8 @@ namespace WeatherWear.Tests
             geoLocationFetcherMock.Setup(x => x.GetGeolocation())
                 .ReturnsAsync(new GeoLocation
                 {
-                    Latitude = 123.45,
-                    Longitude = 67.89
+                    lat = 123.45,
+                    lon = 67.89
                 });
 
             // Mock the behavior of GetWeather
@@ -119,8 +118,8 @@ namespace WeatherWear.Tests
             geoLocationFetcherMock.Setup(x => x.GetGeolocation())
                 .ReturnsAsync(new GeoLocation
                 {
-                    Latitude = 123.45,
-                    Longitude = 67.89
+                    lat = 123.45,
+                    lon = 67.89
                 });
 
             // Mock the behavior of GetWeather

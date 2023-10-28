@@ -6,7 +6,7 @@ using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using WeatherWear.Models;
 
-namespace WeatherWear.Services
+namespace WeatherWear.Services.APIFetchers.Interfaces
 {
     public interface IGeoLocationFetcher
     {

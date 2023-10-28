@@ -15,7 +15,6 @@ namespace WeatherWear.Core.Models
             WarmWeather,
         }
         public double Temperature { get; set; }
-        public string? Country { get; set; }
         public double Precipitation { get; set; }
     }
 }

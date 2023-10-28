@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using WeatherWear.Core;
 using WeatherWear.Models;
-using WeatherWear.Services;
+using WeatherWear.Services.APIFetchers.Interfaces;
 
 namespace WeatherWear.Tests.Stubs
 {

@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using WeatherWear.Core.Models;
 
-namespace WeatherWear.Services
+namespace WeatherWear.Services.APIFetchers.Interfaces
 {
     public interface IWeatherFetcher
     {

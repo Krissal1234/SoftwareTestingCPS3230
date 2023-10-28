@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using WeatherWear.Core.Models;
 using WeatherWear.Models;
-using WeatherWear.Services;
+using WeatherWear.Services.APIFetchers.Interfaces;
 
 namespace WeatherWear.Core
 {
@@ -27,7 +27,7 @@ namespace WeatherWear.Core
 
                 if (loc != null)
                 {
-                    WeatherData weatherData = await GetWeatherAsync(loc.Latitude, loc.Longitude);
+                    WeatherData weatherData = await GetWeatherAsync(loc.lat, loc.lon);
 
                     bool isRaining = _weatherRecommendationService.IsRaining(weatherData);
                     bool isWarm = _weatherRecommendationService.GetWeatherType(weatherData) == WeatherData.Weather.WarmWeather;
@@ -47,7 +47,6 @@ namespace WeatherWear.Core
             }
             return string.Empty;
         }
-
 
 
         protected virtual async Task<GeoLocation> GetGeolocationAsync()

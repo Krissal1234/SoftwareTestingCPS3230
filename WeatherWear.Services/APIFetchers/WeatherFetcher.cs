@@ -1,39 +1,44 @@
 ﻿using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Net.Http;
 using System.Threading.Tasks;
 using WeatherWear.Core.Models;
+using WeatherWear.Exceptions;
+using WeatherWear.Services.APIFetchers.Interfaces;
 
 namespace WeatherWear.Services.APIFetchers
 {
     public class WeatherFetcher : IWeatherFetcher
     {
+        private readonly HttpClient _httpClient;
+        public WeatherFetcher(HttpClient client) 
+        {
+            _httpClient = client;
+        }
         public async Task<WeatherData> GetWeather(double latitude, double longitude)
         {
             try
             {
-                var client = new HttpClient();
+               
                 string url = $"https://weatherapi-com.p.rapidapi.com/current.json?q={latitude}%2C{longitude}";
                 var request = new HttpRequestMessage
                 {
                     Method = HttpMethod.Get,
                     RequestUri = new Uri(url),
                     Headers =
-                {
-                    { "X-RapidAPI-Key", "d2c7a7bd86msh82a34e2ff43497ep13923bjsne5a345122fee" },
-                    { "X-RapidAPI-Host", "weatherapi-com.p.rapidapi.com" },
-                },
+                    {
+                        { "X-RapidAPI-Key", "d2c7a7bd86msh82a34e2ff43497ep13923bjsne5a345122fee" },
+                        { "X-RapidAPI-Host", "weatherapi-com.p.rapidapi.com" },
+                    },
                 };
 
-                using (var response = await client.SendAsync(request))
+                using (var response = await _httpClient.SendAsync(request))
                 {
                     if (response.IsSuccessStatusCode)
                     {
                         var body = await response.Content.ReadAsStringAsync();
-                        WeatherData weatherData = JsonConvert.DeserializeObject<WeatherData>(body);
-                        return weatherData;
+                        WeatherData extractedWeatherData = ExtractWeatherData(body);
+                        return extractedWeatherData;
                     }
                     else
                     {
@@ -43,13 +48,36 @@ namespace WeatherWear.Services.APIFetchers
             }
             catch (HttpRequestException ex)
             {
-                throw new WeatherApiException("Error while fetching weather data", ex);
+                throw new ApiException("Error while fetching weather data");
             }
             catch (JsonException ex)
             {
-                throw new WeatherApiException("Error while deserializing weather data", ex);
+                throw new ApiException("Error while deserializing weather data");
             }
         }
 
+        private WeatherData ExtractWeatherData(string json)
+        {
+            var rawWeatherData = JsonConvert.DeserializeObject<RawWeatherData>(json);
+
+            var extractedWeatherData = new WeatherData
+            {
+                Temperature = rawWeatherData.Current.temp_c, // Temperature in Celsius
+                Precipitation = rawWeatherData.Current.precip_mm, // Precipitation in millimeters
+            };
+
+            return extractedWeatherData;
+        }
+
+        private class RawWeatherData
+        {
+            public CurrentWeather Current { get; set; }
+
+            public class CurrentWeather
+            {
+                public double temp_c { get; set; }
+                public double precip_mm { get; set; }
+            }
+        }
     }
 }

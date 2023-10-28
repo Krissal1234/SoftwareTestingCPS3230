@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using WeatherWear.Services;
 using WeatherWear.Services.APIFetchers;
+using WeatherWear.Services.APIFetchers.Interfaces;
 
 namespace WeatherWear
 {
