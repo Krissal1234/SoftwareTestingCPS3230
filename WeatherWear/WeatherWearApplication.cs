@@ -19,12 +19,12 @@ namespace WeatherWear.ConsoleApp
         private readonly IBackupGeoLocationFetcher _backupGeoLocationFetcher;
         private readonly IWeatherFetcher _weatherFetcher;
         private readonly FutureWeatherFetcher _futureWeatherFetcher;
-        private readonly CurrentClothingRecommendation _clothingRecommendation;
+        private readonly ClothingRecommendation _clothingRecommendation;
         private readonly WeatherRecommendationService _weatherRecommendation;
         public WeatherWearApplication(IGeoLocationFetcher geoLocationFetcher, 
                                         IBackupGeoLocationFetcher backupGeoLocationFetcher, 
                                         IWeatherFetcher weatherFetcher,
-                                        CurrentClothingRecommendation clothingRecommendation,
+                                        ClothingRecommendation clothingRecommendation,
                                         WeatherRecommendationService weatherRecommendationService,
                                         FutureWeatherFetcher futureWeatherFetcher)
         {
@@ -81,13 +81,21 @@ namespace WeatherWear.ConsoleApp
         private async Task RecommendClothingForCurrentLocationAsync()
         {
             _clothingRecommendation.SetWeatherRecommendationService(_weatherRecommendation);
-            Console.WriteLine(await _clothingRecommendation.CheckWeatherAsync());
+            Console.WriteLine(await _clothingRecommendation.CheckCurrentWeather());
             
         }
 
-        static void RecommendClothingForFutureLocation()
+        private async void RecommendClothingForFutureLocation()
         {
-            
+            Console.WriteLine("Please enter the IATA code: ");
+            string iataCode = Console.ReadLine();
+
+            Console.WriteLine("Please enter the date of arrival (yyyy-MM-dd): ");
+            string dateOfArrival = Console.ReadLine();
+            _clothingRecommendation.SetFutureWeatherFetcher(_futureWeatherFetcher);
+            Console.WriteLine(await _clothingRecommendation.CheckFutureWeather(iataCode, dateOfArrival));
+
+
         }
 
     }

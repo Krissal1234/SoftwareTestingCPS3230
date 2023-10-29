@@ -44,7 +44,7 @@ namespace WeatherWear.Tests
 
 
             // Act
-            string result = await clothingRecommendation.CheckWeatherAsync();
+            string result = await clothingRecommendation.CheckCurrentWeather();
 
 
             // Assert
@@ -66,7 +66,7 @@ namespace WeatherWear.Tests
             var clothingRecommendation = new TestableClothingRecommendation(geoLocationFetcherMock.Object, weatherFetcherMock.Object);
 
             // Act
-            string result = await clothingRecommendation.CheckWeatherAsync();
+            string result = await clothingRecommendation.CheckCurrentWeather();
 
             // Assert
             Assert.Equal(string.Empty, result);
@@ -101,7 +101,7 @@ namespace WeatherWear.Tests
             clothingRecommendation.SetWeatherRecommendationService(weatherRecommendationService);
 
             // Act
-            string consoleMessage = await clothingRecommendation.CheckWeatherAsync();
+            string consoleMessage = await clothingRecommendation.CheckCurrentWeather();
 
             // Assert
             Assert.Contains("wear light clothing", consoleMessage);
@@ -136,7 +136,7 @@ namespace WeatherWear.Tests
             clothingRecommendation.SetWeatherRecommendationService(weatherRecommendationService);
 
             // Act
-            string consoleMessage = await clothingRecommendation.CheckWeatherAsync();
+            string consoleMessage = await clothingRecommendation.CheckCurrentWeather();
 
             // Assert
             Assert.Contains("wear warm clothing", consoleMessage);

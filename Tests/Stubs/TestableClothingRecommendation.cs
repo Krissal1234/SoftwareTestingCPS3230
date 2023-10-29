@@ -9,7 +9,7 @@ using WeatherWear.Services.APIFetchers.Interfaces;
 
 namespace WeatherWear.Tests.Stubs
 {
-    public class TestableClothingRecommendation : CurrentClothingRecommendation
+    public class TestableClothingRecommendation : ClothingRecommendation
     {
         public TestableClothingRecommendation(IGeoLocationFetcher geoLocationFetcher, IWeatherFetcher weatherFetcher)
             : base(geoLocationFetcher, weatherFetcher)

@@ -41,7 +41,7 @@ namespace WeatherWear.Services.APIFetchers
                     if (response.IsSuccessStatusCode)
                     {
                         var body = await response.Content.ReadAsStringAsync();
-                        WeatherData extractedWeatherData = ExtractWeatherData(body,date);
+                        WeatherData extractedWeatherData = ExtractWeatherData(body, date);
                         return extractedWeatherData;
                     }
                     else
@@ -64,46 +64,53 @@ namespace WeatherWear.Services.APIFetchers
 
         private WeatherData ExtractWeatherData(string json, string targetDate)
         {
-            var rawWeatherData = JsonConvert.DeserializeObject<RawWeatherData>(json);
-            var forecastData = rawWeatherData.Forecast?.ForecastDay.Find(forecast => forecast.Date == targetDate);
+            var data = JsonConvert.DeserializeObject<Root>(json);
 
-            if (forecastData == null)
+            if (data.forecast != null && data.forecast.forecastday.Length > 0)
             {
-                return null;
+                // Extracting precipitation and temperature for the first forecast day
+                float totalPrecipitation = data.forecast.forecastday[0].day.totalprecip_mm;
+                float averageTemperature = data.forecast.forecastday[0].day.avgtemp_c;
+
+                return new WeatherData
+                {
+                    Temperature = averageTemperature,
+                    Precipitation = totalPrecipitation
+                };
             }
-
-            return new WeatherData
+            else
             {
-                Temperature = forecastData.Day.Temp_c,
-                Precipitation = forecastData.Day.Precip_mm,
-            };
+                throw new Exception("Invalid JSON structure or no forecast data found.");
+            }
         }
+
 
         public void SetHttpClient(HttpClient client)
         {
             _httpClient = client;
         }
-        private class RawWeatherData
-        {
-            public ForecastData Forecast { get; set; }
-        }
-
-        private class ForecastData
-        {
-            public List<ForecastDay> ForecastDay { get; set; }
-        }
-
-        private class ForecastDay
-        {
-            public string Date { get; set; }
-            public DayData Day { get; set; }
-        }
-
-        private class DayData
-        {
-            public double Temp_c { get; set; }
-            public double Precip_mm { get; set; }
-        }
 
     }
+
+    public class Root
+    {
+        public Forecast forecast { get; set; }
+    }
+
+    public class Forecast
+    {
+        public Forecastday[] forecastday { get; set; }
+    }
+
+    public class Forecastday
+    {
+        public Day day { get; set; }
+    }
+
+    public class Day
+    {
+        public float totalprecip_mm { get; set; }
+        public float avgtemp_c { get; set; }
+    }
+
 }

@@ -37,7 +37,7 @@ namespace WeatherWear
                     services.AddSingleton<IWeatherFetcher, WeatherFetcher>();
                     services.AddSingleton<FutureWeatherFetcher>();
                     services.AddSingleton<IBackupGeoLocationFetcher, BackupGeoLocationFetcher>();
-                    services.AddSingleton<CurrentClothingRecommendation>();
+                    services.AddSingleton<ClothingRecommendation>();
                     services.AddSingleton<WeatherRecommendationService>();
 
                     // Add WeatherWearApplication as a singleton service
