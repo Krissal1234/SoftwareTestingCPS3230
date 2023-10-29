@@ -1,15 +1,9 @@
 ﻿using Moq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 using WeatherWear.Core.Models;
 using WeatherWear.Core;
 using WeatherWear.Models;
 using WeatherWear.Tests.Stubs;
-using System.Reflection;
-using System.Net.NetworkInformation;
 using WeatherWear.Services.APIFetchers.Interfaces;
 
 namespace WeatherWear.Tests
@@ -142,6 +136,70 @@ namespace WeatherWear.Tests
             Assert.Contains("wear warm clothing", consoleMessage);
             Assert.Contains("bring an umbrella", consoleMessage);
         }
+
+
+        [Fact]
+        public async Task CheckFutureWeather_ShouldReturnValidMessage()
+        {
+            // Arrange
+            var geoLocationFetcherMock = new Mock<IGeoLocationFetcher>();
+            var weatherFetcherMock = new Mock<IWeatherFetcher>();
+            var futureWeatherFetcherMock = new Mock<IFutureWeatherFetcher>();
+
+            var clothingRecommendation = new ClothingRecommendation(geoLocationFetcherMock.Object, weatherFetcherMock.Object);
+            clothingRecommendation.SetFutureWeatherFetcher(futureWeatherFetcherMock.Object);
+
+            WeatherData expectedWeatherData = new WeatherData
+            {
+                Temperature = 25.0, 
+                Precipitation = 5.0, 
+            };
+            futureWeatherFetcherMock.Setup(f => f.GetWeather(It.IsAny<string>(), It.IsAny<string>()))
+                .ReturnsAsync(expectedWeatherData);
+
+            // Act
+            string result = await clothingRecommendation.CheckFutureWeather("IATA_CODE", "2023-10-30");
+
+            // Assert
+            string expectedMessage = "It is currently raining, so you should bring an umbrella.\nIt is warm, so you should wear light clothing.";
+            Assert.Equal(expectedMessage, result);
+        }
+
+        [Fact]
+        public async Task CheckCurrentWeather_Exception_ShouldReturnEmptyString()
+        {
+            // Arrange
+            var geoLocationFetcherMock = new Mock<IGeoLocationFetcher>();
+            var weatherFetcherMock = new Mock<IWeatherFetcher>();
+
+            geoLocationFetcherMock.Setup(g => g.GetGeolocation()).Throws<Exception>();
+
+            var clothingRecommendation = new ClothingRecommendation(geoLocationFetcherMock.Object, weatherFetcherMock.Object);
+
+            // Act
+            string result = await clothingRecommendation.CheckCurrentWeather();
+
+            // Assert
+            Assert.Equal(string.Empty, result);
+        }
+
+        [Fact]
+        public async Task CheckFutureWeather_Exception_ShouldReturnEmptyString()
+        {
+            // Arrange
+            var futureWeatherFetcherMock = new Mock<IFutureWeatherFetcher>();
+            futureWeatherFetcherMock.Setup(f => f.GetWeather(It.IsAny<string>(), It.IsAny<string>())).Throws<Exception>(); 
+
+            var clothingRecommendation = new ClothingRecommendation(null, null); 
+            clothingRecommendation.SetFutureWeatherFetcher(futureWeatherFetcherMock.Object);
+
+            // Act
+            string result = await clothingRecommendation.CheckFutureWeather("IATA_CODE", "2023-10-30");
+
+            // Assert
+            Assert.Equal(string.Empty, result);
+        }
+
     }
 
 

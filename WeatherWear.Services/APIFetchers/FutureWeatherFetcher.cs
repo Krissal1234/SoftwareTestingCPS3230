@@ -11,7 +11,7 @@ using WeatherWear.Services.APIFetchers.Interfaces;
 
 namespace WeatherWear.Services.APIFetchers
 {
-    public class FutureWeatherFetcher
+    public class FutureWeatherFetcher : IFutureWeatherFetcher
     {
         private HttpClient _httpClient;
 
@@ -41,7 +41,7 @@ namespace WeatherWear.Services.APIFetchers
                     if (response.IsSuccessStatusCode)
                     {
                         var body = await response.Content.ReadAsStringAsync();
-                        WeatherData extractedWeatherData = ExtractWeatherData(body, date);
+                        WeatherData extractedWeatherData = ExtractWeatherData(body);
                         return extractedWeatherData;
                     }
                     else
@@ -62,7 +62,7 @@ namespace WeatherWear.Services.APIFetchers
         }
 
 
-        private WeatherData ExtractWeatherData(string json, string targetDate)
+        private WeatherData ExtractWeatherData(string json)
         {
             var data = JsonConvert.DeserializeObject<Root>(json);
 

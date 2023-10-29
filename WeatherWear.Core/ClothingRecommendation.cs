@@ -1,9 +1,5 @@
-﻿using System;
-using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
-using WeatherWear.Core.Models;
+﻿using WeatherWear.Core.Models;
 using WeatherWear.Models;
-using WeatherWear.Services;
 using WeatherWear.Services.APIFetchers;
 using WeatherWear.Services.APIFetchers.Interfaces;
 
@@ -15,7 +11,7 @@ namespace WeatherWear.Core
         private readonly IWeatherFetcher _weatherFetcher;
         private WeatherRecommendationService _weatherRecommendationService;
         private readonly IBackupGeoLocationFetcher _backupGeoLocationFetcher;
-        private FutureWeatherFetcher _futureWeatherFetcher;
+        private IFutureWeatherFetcher _futureWeatherFetcher;
 
         public ClothingRecommendation(IGeoLocationFetcher geoLocationFetcher, IWeatherFetcher weatherFetcher)
         {  
@@ -24,7 +20,7 @@ namespace WeatherWear.Core
             _weatherRecommendationService = new WeatherRecommendationService();
         }
 
-        public void SetFutureWeatherFetcher(FutureWeatherFetcher futureWeatherFetcher)
+        public void SetFutureWeatherFetcher(IFutureWeatherFetcher futureWeatherFetcher)
         {
             _futureWeatherFetcher = futureWeatherFetcher;
         }
@@ -45,8 +41,7 @@ namespace WeatherWear.Core
             }
             catch (Exception ex)
             {
-                // Handle other exceptions
-                // Log the exception
+                Console.WriteLine("An error occurred while trying to get weather data.");
             }
             return string.Empty;
         }
@@ -63,8 +58,8 @@ namespace WeatherWear.Core
             }
             catch (Exception ex)
             {
-                // Handle other exceptions
-                // Log the exception
+                Console.WriteLine("An error occurred while trying to get future weather data.");
+               
             }
             return string.Empty;
         }
