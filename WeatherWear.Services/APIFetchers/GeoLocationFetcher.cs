@@ -1,10 +1,6 @@
 ﻿using Newtonsoft.Json;
-using System;
-using System.Net.Http;
-using System.Threading.Tasks;
 using WeatherWear.Exceptions;
 using WeatherWear.Models;
-using WeatherWear.Services.APIFetchers;
 using WeatherWear.Services.APIFetchers.Interfaces;
 
 namespace WeatherWear.Services
@@ -13,12 +9,14 @@ namespace WeatherWear.Services
     {
         private readonly HttpClient _httpClient;
         private readonly string _apiUrl;
+        private readonly IBackupGeoLocationFetcher _backupGeoLocationFetcher;
 
-        public GeoLocationFetcher(HttpClient httpClient)
+        public GeoLocationFetcher(HttpClient httpClient, IBackupGeoLocationFetcher backupGeoLocationFetcher)
         {
             _httpClient = httpClient;
             _httpClient.Timeout = TimeSpan.FromSeconds(3);
             _apiUrl = "http://ip-api.com/json/";
+            _backupGeoLocationFetcher = backupGeoLocationFetcher;
         }
 
         public async Task<GeoLocation> GetGeolocation()
@@ -33,14 +31,8 @@ namespace WeatherWear.Services
                     return JsonConvert.DeserializeObject<GeoLocation>(json);
                 }
                 else
-                {
-                    // Create a new HttpClient for the backup request
-                    using (var backupHttpClient = new HttpClient())
-                    {
-                        backupHttpClient.Timeout = TimeSpan.FromSeconds(3);
-                        BackupGeoLocationFetcher backupGeoLocationFetcher = new BackupGeoLocationFetcher(backupHttpClient);
-                        return await TryBackupGeoLocationFetcher(backupGeoLocationFetcher);
-                    }
+                {       
+                        return await _backupGeoLocationFetcher.GetGeolocation();
                 }
             }
             catch (HttpRequestException ex)
@@ -49,9 +41,6 @@ namespace WeatherWear.Services
             }
         }
 
-        private async Task<GeoLocation> TryBackupGeoLocationFetcher(BackupGeoLocationFetcher backupGeoLocationFetcher)
-        {
-            return await backupGeoLocationFetcher.GetGeolocation();
-        }
+ 
     }
 }

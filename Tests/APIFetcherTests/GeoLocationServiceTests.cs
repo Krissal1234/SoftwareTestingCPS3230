@@ -10,6 +10,7 @@ using WeatherWear.Exceptions;
 using WeatherWear.Models;
 using WeatherWear.Services;
 using WeatherWear.Services.APIFetchers;
+using WeatherWear.Services.APIFetchers.Interfaces;
 
 namespace Tests.GeolocationTests
 {
@@ -20,6 +21,7 @@ namespace Tests.GeolocationTests
         {
             // Arrange
             var mockHttpMessageHandler = new Mock<HttpMessageHandler>();
+            var mockBackupFetcher = new Mock<IBackupGeoLocationFetcher>();
             mockHttpMessageHandler.Protected()
                 .Setup<Task<HttpResponseMessage>>("SendAsync", ItExpr.IsAny<HttpRequestMessage>(), ItExpr.IsAny<CancellationToken>())
                 .ReturnsAsync(new HttpResponseMessage
@@ -29,7 +31,7 @@ namespace Tests.GeolocationTests
                 });
 
             var httpClient = new HttpClient(mockHttpMessageHandler.Object);
-            var geolocationFetcher = new GeoLocationFetcher(httpClient);
+            var geolocationFetcher = new GeoLocationFetcher(httpClient, mockBackupFetcher.Object);
 
             // Act
             GeoLocation geoLocation = await geolocationFetcher.GetGeolocation();
@@ -45,12 +47,13 @@ namespace Tests.GeolocationTests
         {
             // Arrange
             var mockHttpMessageHandler = new Mock<HttpMessageHandler>();
+            var mockBackupFetcher = new Mock<IBackupGeoLocationFetcher>();
             mockHttpMessageHandler.Protected()
                 .Setup<Task<HttpResponseMessage>>("SendAsync", ItExpr.IsAny<HttpRequestMessage>(), ItExpr.IsAny<CancellationToken>())
                 .ThrowsAsync(new HttpRequestException("Request failed"));
 
             var httpClient = new HttpClient(mockHttpMessageHandler.Object);
-            var geolocationFetcher = new GeoLocationFetcher(httpClient);
+            var geolocationFetcher = new GeoLocationFetcher(httpClient,mockBackupFetcher.Object);
 
             // Act and Assert
             ApiException exception = await Assert.ThrowsAsync<ApiException>(async () => await geolocationFetcher.GetGeolocation());
@@ -60,33 +63,30 @@ namespace Tests.GeolocationTests
         public async Task GetGeolocation_UnsuccessfulResponse_UsesBackupFetcher()
         {
             // Arrange
-            var httpClientMock = new Mock<HttpClient>();
-            httpClientMock
-                .Setup(client => client.GetAsync(It.IsAny<string>()))
-                .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.InternalServerError));
+            var mockBackupFetcher = new Mock<IBackupGeoLocationFetcher>();
+            var expectedGeoLocation = new GeoLocation { lat=1.0,lon=2.0 };
 
-            var backupHttpClientMock = new Mock<HttpClient>();
-            backupHttpClientMock
-                .Setup(client => client.GetAsync(It.IsAny<string>()))
-                .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK)
-                {
-                    Content = new StringContent("{\"lat\": 1.0, \"lon\": 2.0}"), // Replace with your sample JSON data
-                });
+            // Configure the backup fetcher to return the expected GeoLocation
+            mockBackupFetcher.Setup(f => f.GetGeolocation()).ReturnsAsync(expectedGeoLocation);
 
-            var backupGeoLocationFetcherMock = new Mock<BackupGeoLocationFetcher>(backupHttpClientMock.Object);
-            backupGeoLocationFetcherMock
-                .Setup(fetcher => fetcher.GetGeolocation())
-                .ReturnsAsync(new GeoLocation { lat = 1.0, lon=2.0});
+            // Configure the first API call to fail (e.g., simulate a non-success status code)
+            var fakeResponse = new HttpResponseMessage(HttpStatusCode.BadRequest);
+            var mockHttpMessageHandler = new Mock<HttpMessageHandler>();
+            mockHttpMessageHandler
+                .Protected()
+                .Setup<Task<HttpResponseMessage>>("SendAsync", ItExpr.IsAny<HttpRequestMessage>(), ItExpr.IsAny<CancellationToken>())
+                .ReturnsAsync(fakeResponse);
 
-            var geoLocationFetcher = new GeoLocationFetcher(httpClientMock.Object);
+            var httpClient = new HttpClient(mockHttpMessageHandler.Object);
+            var geoLocationFetcher = new GeoLocationFetcher(httpClient, mockBackupFetcher.Object);
 
             // Act
             var result = await geoLocationFetcher.GetGeolocation();
 
             // Assert
-            Assert.NotNull(result);
-            Assert.Equal(1.0,result.lat);
-            Assert.Equal(2.0, result.lon);
+            mockBackupFetcher.Verify(f => f.GetGeolocation(), Times.Once);
+            // Assert that the result matches the expected GeoLocation
+            Assert.Equal(expectedGeoLocation, result);
         }
     }
   }
