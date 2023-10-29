@@ -13,13 +13,9 @@ using WeatherWear.Services.APIFetchers.Interfaces;
 
 namespace WeatherWear.Services.APIFetchers
 {
-    public class BackupGeoLocationFetcher : IGeoLocationFetcher
+    public class BackupGeoLocationFetcher : IBackupGeoLocationFetcher
     {
-        private readonly HttpClient _httpClient;
-        public BackupGeoLocationFetcher(HttpClient httpClient)
-        {
-            _httpClient = httpClient;
-        }
+        private HttpClient _httpClient;
 
         public async Task<GeoLocation> GetGeolocation()
         {
@@ -49,6 +45,10 @@ namespace WeatherWear.Services.APIFetchers
                 throw new ApiException("API request failed: " + ex.Message);
             }
            
+        }
+        public void SetHttpClient(HttpClient httpClient)
+        {
+            _httpClient = httpClient;
         }
     } 
 }

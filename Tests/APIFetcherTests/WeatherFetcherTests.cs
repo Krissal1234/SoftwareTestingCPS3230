@@ -30,7 +30,8 @@ namespace WeatherWear.Tests.APIFetcherTests
                 });
 
             var httpClient = new HttpClient(mockHttpMessageHandler.Object);
-            var weatherFetcher = new WeatherFetcher(httpClient);
+            var weatherFetcher = new WeatherFetcher();
+            weatherFetcher.SetHttpClient(httpClient);
 
             // Act
             WeatherData weatherData = await weatherFetcher.GetWeather(1.0, 3.0);
@@ -52,7 +53,8 @@ namespace WeatherWear.Tests.APIFetcherTests
                 .ThrowsAsync(new HttpRequestException("Request failed"));
 
             var httpClient = new HttpClient(mockHttpMessageHandler.Object);
-            var weatherFetcher = new WeatherFetcher(httpClient);
+            var weatherFetcher = new WeatherFetcher();
+            weatherFetcher.SetHttpClient(httpClient);
 
             // Act and Assert
             ApiException exception = await Assert.ThrowsAsync<ApiException>(async () => await weatherFetcher.GetWeather(1.0, 2.0));
@@ -73,7 +75,8 @@ namespace WeatherWear.Tests.APIFetcherTests
                 });
 
             var httpClient = new HttpClient(mockHttpMessageHandler.Object);
-            var weatherFetcher = new WeatherFetcher(httpClient);
+            var weatherFetcher = new WeatherFetcher();
+            weatherFetcher.SetHttpClient(httpClient);
 
             // Act and Assert
             ApiException exception = await Assert.ThrowsAsync<ApiException>(async () => await weatherFetcher.GetWeather(1.0, 2.0));
@@ -94,7 +97,8 @@ namespace WeatherWear.Tests.APIFetcherTests
                 });
 
             var httpClient = new HttpClient(mockHttpMessageHandler.Object);
-            var weatherFetcher = new WeatherFetcher(httpClient);
+            var weatherFetcher = new WeatherFetcher();
+            weatherFetcher.SetHttpClient(httpClient);
 
             // Act and Assert
             await Assert.ThrowsAsync<ApiException>(async () => await weatherFetcher.GetWeather(1.0, 2.0));

@@ -10,11 +10,8 @@ namespace WeatherWear.Services.APIFetchers
 {
     public class WeatherFetcher : IWeatherFetcher
     {
-        private readonly HttpClient _httpClient;
-        public WeatherFetcher(HttpClient client) 
-        {
-            _httpClient = client;
-        }
+        private HttpClient _httpClient;
+      
         public async Task<WeatherData> GetWeather(double latitude, double longitude)
         {
             try
@@ -54,6 +51,10 @@ namespace WeatherWear.Services.APIFetchers
             {
                 throw new ApiException("Error while deserializing weather data");
             }
+        }
+        public void SetHttpClient(HttpClient httpClient)
+        {
+            _httpClient = httpClient;
         }
 
         private WeatherData ExtractWeatherData(string json)

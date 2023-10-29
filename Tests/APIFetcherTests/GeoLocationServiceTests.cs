@@ -31,7 +31,9 @@ namespace Tests.GeolocationTests
                 });
 
             var httpClient = new HttpClient(mockHttpMessageHandler.Object);
-            var geolocationFetcher = new GeoLocationFetcher(httpClient, mockBackupFetcher.Object);
+            var geolocationFetcher = new GeoLocationFetcher();
+            geolocationFetcher.SetHttpClient(httpClient);
+            geolocationFetcher.SetBackupGeoLocationFetcher(mockBackupFetcher.Object);
 
             // Act
             GeoLocation geoLocation = await geolocationFetcher.GetGeolocation();
@@ -53,7 +55,9 @@ namespace Tests.GeolocationTests
                 .ThrowsAsync(new HttpRequestException("Request failed"));
 
             var httpClient = new HttpClient(mockHttpMessageHandler.Object);
-            var geolocationFetcher = new GeoLocationFetcher(httpClient,mockBackupFetcher.Object);
+            var geolocationFetcher = new GeoLocationFetcher();
+            geolocationFetcher.SetHttpClient(httpClient);
+            geolocationFetcher.SetBackupGeoLocationFetcher(mockBackupFetcher.Object);
 
             // Act and Assert
             ApiException exception = await Assert.ThrowsAsync<ApiException>(async () => await geolocationFetcher.GetGeolocation());
@@ -78,7 +82,9 @@ namespace Tests.GeolocationTests
                 .ReturnsAsync(fakeResponse);
 
             var httpClient = new HttpClient(mockHttpMessageHandler.Object);
-            var geoLocationFetcher = new GeoLocationFetcher(httpClient, mockBackupFetcher.Object);
+            var geoLocationFetcher = new GeoLocationFetcher();
+            geoLocationFetcher.SetHttpClient(httpClient);
+            geoLocationFetcher.SetBackupGeoLocationFetcher(mockBackupFetcher.Object);
 
             // Act
             var result = await geoLocationFetcher.GetGeolocation();

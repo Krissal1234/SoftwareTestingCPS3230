@@ -10,5 +10,7 @@ namespace WeatherWear.Services.APIFetchers.Interfaces
     public interface IBackupGeoLocationFetcher
     {
         Task<GeoLocation> GetGeolocation();
+
+        void SetHttpClient(HttpClient httpClient);
     }
 }

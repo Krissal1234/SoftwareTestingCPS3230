@@ -7,16 +7,13 @@ namespace WeatherWear.Services
 {
     public class GeoLocationFetcher : IGeoLocationFetcher
     {
-        private readonly HttpClient _httpClient;
+        private HttpClient _httpClient;
         private readonly string _apiUrl;
-        private readonly IBackupGeoLocationFetcher _backupGeoLocationFetcher;
+        private IBackupGeoLocationFetcher _backupGeoLocationFetcher;
 
-        public GeoLocationFetcher(HttpClient httpClient, IBackupGeoLocationFetcher backupGeoLocationFetcher)
+        public GeoLocationFetcher()
         {
-            _httpClient = httpClient;
-            _httpClient.Timeout = TimeSpan.FromSeconds(3);
             _apiUrl = "http://ip-api.com/json/";
-            _backupGeoLocationFetcher = backupGeoLocationFetcher;
         }
 
         public async Task<GeoLocation> GetGeolocation()
@@ -39,6 +36,17 @@ namespace WeatherWear.Services
             {
                 throw new ApiException("API request failed: " + ex.Message);
             }
+        }
+
+        public void SetBackupGeoLocationFetcher(IBackupGeoLocationFetcher backupGeoLocationFetcher)
+        {
+            _backupGeoLocationFetcher = backupGeoLocationFetcher;
+        }
+
+        public void SetHttpClient(HttpClient httpClient)
+        {
+            _httpClient = httpClient;
+            _httpClient.Timeout = TimeSpan.FromSeconds(3);
         }
 
  

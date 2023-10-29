@@ -12,5 +12,7 @@ namespace WeatherWear.Services.APIFetchers.Interfaces
 
         public Task<WeatherData> GetWeather(double latitude, double longitude);
 
+        void SetHttpClient(HttpClient httpClient);
+
     }
 }

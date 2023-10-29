@@ -3,20 +3,23 @@ using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using WeatherWear.Core.Models;
 using WeatherWear.Models;
+using WeatherWear.Services;
 using WeatherWear.Services.APIFetchers.Interfaces;
 
 namespace WeatherWear.Core
 {
-    public class ClothingRecommendation
+    public class CurrentClothingRecommendation
     {
         private readonly IGeoLocationFetcher _geoLocationFetcher;
         private readonly IWeatherFetcher _weatherFetcher;
         private WeatherRecommendationService _weatherRecommendationService;
+        private readonly IBackupGeoLocationFetcher _backupGeoLocationFetcher;
 
-        public ClothingRecommendation(IGeoLocationFetcher geoLocationFetcher, IWeatherFetcher weatherFetcher)
+        public CurrentClothingRecommendation(IGeoLocationFetcher geoLocationFetcher, IWeatherFetcher weatherFetcher, IBackupGeoLocationFetcher backupGeoLocationFetcher)
         {
             _geoLocationFetcher = geoLocationFetcher;
             _weatherFetcher = weatherFetcher;
+            _backupGeoLocationFetcher = backupGeoLocationFetcher;
         }
 
         public async Task<string> CheckWeatherAsync()
@@ -51,11 +54,14 @@ namespace WeatherWear.Core
 
         protected virtual async Task<GeoLocation> GetGeolocationAsync()
         {
+            _geoLocationFetcher.SetHttpClient(new HttpClient());
+            _geoLocationFetcher.SetBackupGeoLocationFetcher(_backupGeoLocationFetcher);
             return await _geoLocationFetcher.GetGeolocation();
         }
 
         protected virtual async Task<WeatherData> GetWeatherAsync(double latitude, double longitude)
         {
+            _weatherFetcher.SetHttpClient(new HttpClient());    
             return await _weatherFetcher.GetWeather(latitude, longitude);
         }
 

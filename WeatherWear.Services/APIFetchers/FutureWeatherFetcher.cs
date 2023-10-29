@@ -13,11 +13,8 @@ namespace WeatherWear.Services.APIFetchers
 {
     public class FutureWeatherFetcher
     {
-        private readonly HttpClient _httpClient;
-        public FutureWeatherFetcher(HttpClient client)
-        {
-            _httpClient = client;
-        }
+        private HttpClient _httpClient;
+
         public async Task<WeatherData> GetWeather(string IATA, string date)
         {
             if (!IsValidDateFormat(date))
@@ -82,6 +79,10 @@ namespace WeatherWear.Services.APIFetchers
             };
         }
 
+        public void SetHttpClient(HttpClient client)
+        {
+            _httpClient = client;
+        }
         private class RawWeatherData
         {
             public ForecastData Forecast { get; set; }
