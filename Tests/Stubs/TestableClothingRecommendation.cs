@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using WeatherWear.Core;
+﻿using WeatherWear.Core;
 using WeatherWear.Models;
 using WeatherWear.Services.APIFetchers.Interfaces;
 
@@ -18,7 +13,6 @@ namespace WeatherWear.Tests.Stubs
 
         protected override async Task<GeoLocation> GetGeolocationAsync()
         {
-            // Mocked behavior for GetGeolocationAsync
             return null;
         }
     }

@@ -21,10 +21,10 @@ namespace WeatherWear.Services.APIFetchers
             {
                 throw new ArgumentException("Date is not in the required format (YY-MM-dd).");
             }
-
+            string url = $"https://weatherapi-com.p.rapidapi.com/forecast.json?q={IATA}&dt={date}";
             try
             {
-                string url = $"https://weatherapi-com.p.rapidapi.com/forecast.json?q={IATA}&dt={date}";
+
                 var request = new HttpRequestMessage
                 {
                     Method = HttpMethod.Get,
@@ -52,7 +52,7 @@ namespace WeatherWear.Services.APIFetchers
             }
             catch (Exception ex)
             {
-                throw new ApiException("Error while fetching weather data");
+                throw new ApiException("Error while fetching weather data", url);
             }
         }
 

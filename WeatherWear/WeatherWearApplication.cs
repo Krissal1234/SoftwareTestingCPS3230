@@ -72,13 +72,13 @@ namespace WeatherWear.ConsoleApp
                 {
                     Console.WriteLine("Invalid input. Please enter a number.");
                 }
-
+                Thread.Sleep(1000);
                 Console.WriteLine("Press any key to continue...");
                 Console.ReadKey();
             }
         }
 
-        private async Task RecommendClothingForCurrentLocationAsync()
+        private async void RecommendClothingForCurrentLocationAsync()
         {
             _clothingRecommendation.SetWeatherRecommendationService(_weatherRecommendation);
             Console.WriteLine(await _clothingRecommendation.CheckCurrentWeather());

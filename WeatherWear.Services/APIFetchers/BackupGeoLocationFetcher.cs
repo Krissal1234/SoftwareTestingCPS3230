@@ -19,10 +19,11 @@ namespace WeatherWear.Services.APIFetchers
 
         public async Task<GeoLocation> GetGeolocation()
         {
+            string apiKey = "83c2e33f1d1a41669f9299ebfa8f1f8e";
+            string apiUrl = $"https://api.ipgeolocation.io/ipgeo?apiKey={apiKey}&ip=1.1.1.1"; // Replace API_KEY with your actual API key
+
             try
             {
-                string apiKey = "83c2e33f1d1a41669f9299ebfa8f1f8e";
-                string apiUrl = $"https://api.ipgeolocation.io/ipgeo?apiKey={apiKey}&ip=1.1.1.1"; // Replace API_KEY with your actual API key
 
 
                 HttpResponseMessage response = await _httpClient.GetAsync(apiUrl);
@@ -42,7 +43,7 @@ namespace WeatherWear.Services.APIFetchers
             }
             catch (HttpRequestException ex)
             {
-                throw new ApiException("API request failed: " + ex.Message);
+                throw new ApiException("API request failed: " + ex.Message, apiUrl);
             }
            
         }

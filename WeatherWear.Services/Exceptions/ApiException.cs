@@ -1,15 +1,21 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace WeatherWear.Exceptions
 {
     public class ApiException : Exception
     {
-        public ApiException(string message) : base(message)
+    
+        public string ApiEndpoint { get; }
+
+        public ApiException(string message, string apiEndpoint) : base(message)
         {
+            ApiEndpoint = apiEndpoint;
+        }
+
+      
+        public override string ToString()
+        {
+            return $"ApiException: {Message}, ApiEndpoint: {ApiEndpoint})";
         }
     }
 }

@@ -1,15 +1,9 @@
 ﻿using Moq;
 using Moq.Protected;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 using WeatherWear.Exceptions;
 using WeatherWear.Models;
 using WeatherWear.Services;
-using WeatherWear.Services.APIFetchers;
 using WeatherWear.Services.APIFetchers.Interfaces;
 
 namespace Tests.GeolocationTests
@@ -70,10 +64,10 @@ namespace Tests.GeolocationTests
             var mockBackupFetcher = new Mock<IBackupGeoLocationFetcher>();
             var expectedGeoLocation = new GeoLocation { lat=1.0,lon=2.0 };
 
-            // Configure the backup fetcher to return the expected GeoLocation
+            
             mockBackupFetcher.Setup(f => f.GetGeolocation()).ReturnsAsync(expectedGeoLocation);
 
-            // Configure the first API call to fail (e.g., simulate a non-success status code)
+            // Configure the first API call to fail
             var fakeResponse = new HttpResponseMessage(HttpStatusCode.BadRequest);
             var mockHttpMessageHandler = new Mock<HttpMessageHandler>();
             mockHttpMessageHandler
@@ -91,7 +85,7 @@ namespace Tests.GeolocationTests
 
             // Assert
             mockBackupFetcher.Verify(f => f.GetGeolocation(), Times.Once);
-            // Assert that the result matches the expected GeoLocation
+            // Assert result matches expected GeoLocation
             Assert.Equal(expectedGeoLocation, result);
         }
     }

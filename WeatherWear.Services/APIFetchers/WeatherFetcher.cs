@@ -14,10 +14,11 @@ namespace WeatherWear.Services.APIFetchers
       
         public async Task<WeatherData> GetWeather(double latitude, double longitude)
         {
+            string url = $"https://weatherapi-com.p.rapidapi.com/current.json?q={latitude}%2C{longitude}";
             try
             {
                
-                string url = $"https://weatherapi-com.p.rapidapi.com/current.json?q={latitude}%2C{longitude}";
+       
                 var request = new HttpRequestMessage
                 {
                     Method = HttpMethod.Get,
@@ -45,11 +46,11 @@ namespace WeatherWear.Services.APIFetchers
             }
             catch (HttpRequestException ex)
             {
-                throw new ApiException("Error while fetching weather data");
+                throw new ApiException("Error while fetching weather data", url);
             }
             catch (JsonException ex)
             {
-                throw new ApiException("Error while deserializing weather data");
+                throw new ApiException("Error while deserializing weather data",url);
             }
         }
         public void SetHttpClient(HttpClient httpClient)

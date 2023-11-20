@@ -34,7 +34,7 @@ namespace WeatherWear.Services
             }
             catch (HttpRequestException ex)
             {
-                throw new ApiException("API request failed: " + ex.Message);
+                throw new ApiException("API request failed: " + ex.Message, _apiUrl);
             }
         }
 

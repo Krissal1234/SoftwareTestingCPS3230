@@ -64,7 +64,7 @@ namespace WeatherWear.Tests
         {
             // Arrange
             WeatherData weatherData = new WeatherData() { Precipitation = 0 };
-
+            // Act
             var result = clothingService.IsRaining(weatherData);
 
             // Assert

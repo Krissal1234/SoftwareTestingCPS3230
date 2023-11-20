@@ -17,7 +17,7 @@ namespace WeatherWear.Tests
             var geoLocationFetcherMock = new Mock<IGeoLocationFetcher>();
             var weatherFetcherMock = new Mock<IWeatherFetcher>();
 
-            // Mock the behavior of GetGeolocation
+            // Mocking the behaviour of getGeoLocation
             geoLocationFetcherMock.Setup(x => x.GetGeolocation())
                 .ReturnsAsync(new GeoLocation
                 {
